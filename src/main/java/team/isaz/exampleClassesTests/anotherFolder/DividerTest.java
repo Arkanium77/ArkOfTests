@@ -9,6 +9,7 @@ import team.isaz.annotations.Test;
 import team.isaz.exampleClasses.another.Divider;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 
 public class DividerTest {
     Logger logger = LoggerFactory.getLogger(DividerTest.class);
@@ -23,7 +24,7 @@ public class DividerTest {
 
     @Before
     public void beforeSecond() {
-        simpleString = "SimpleString is " + LocalDate.now().toString();
+        simpleString = "SimpleString is " + LocalTime.now().toString();
     }
 
     @Test
@@ -41,6 +42,6 @@ public class DividerTest {
 
     @After
     public void after(){
-        logger.info("it's after metod runs! {}",simpleString);
+        logger.info("it's after metod runs! {}\n",simpleString);
     }
 }
