@@ -9,17 +9,13 @@ import java.time.LocalDate;
 
 public class AdderTest {
     Adder adder;
-    String simpleString;
 
     @Before
-    public void beforeFirst() {
+    public void before() {
         adder = new Adder();
     }
 
-    @Before
-    public void beforeSecond() {
-        simpleString = "SimpleString is " + LocalDate.now().toString();
-    }
+
 
     @Test
     public void add3and5is8() {
