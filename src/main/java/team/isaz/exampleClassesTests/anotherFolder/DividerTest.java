@@ -3,12 +3,11 @@ package team.isaz.exampleClassesTests.anotherFolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import team.isaz.annotations.After;
-import team.isaz.framework.ArkOfAsserts;
 import team.isaz.annotations.Before;
 import team.isaz.annotations.Test;
 import team.isaz.exampleClasses.another.Divider;
+import team.isaz.framework.ArkOfAsserts;
 
-import java.time.LocalDate;
 import java.time.LocalTime;
 
 public class DividerTest {
@@ -18,7 +17,7 @@ public class DividerTest {
     String simpleString;
 
     @Before
-    public void beforeFirst(){
+    public void beforeFirst() {
         divider = new Divider();
     }
 
@@ -28,20 +27,21 @@ public class DividerTest {
     }
 
     @Test
-    public void divideByZeroException(){
+    public void divideByZeroException() {
         ArkOfAsserts.assertException(
                 new ArithmeticException(),
-                (none) -> divider.div(1,0),
+                (none) -> divider.div(1, 0),
                 null);
     }
 
     @Test
-    public void divideFiveByTwoisTwoPointFive(){
-        ArkOfAsserts.assertEquals(divider.div(5,2).doubleValue(),2.5);
+    public void divideFiveByTwoisTwoPointFive() {
+        ArkOfAsserts.assertEquals(divider.div(5, 2).doubleValue(), 2.5);
     }
 
     @After
-    public void after(){
-        logger.info("it's after metod runs! {}\n",simpleString);
+    public void after() {
+        //Нужен только для демонстрации того, что аннтации Before-After обрабатываются.
+        logger.info("it's after metod runs! {}\n", simpleString);
     }
 }

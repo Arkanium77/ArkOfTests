@@ -6,7 +6,7 @@ package team.isaz.exceptions;
  * произошла неудачная попытка загрузть класс ему принадлежащий.
  */
 public class PackageAnalyzeException extends Exception {
-    public PackageAnalyzeException(String message){
+    public PackageAnalyzeException(String message) {
         super(message);
     }
 
