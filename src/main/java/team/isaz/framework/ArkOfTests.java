@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory;
 import team.isaz.annotations.After;
 import team.isaz.annotations.Before;
 import team.isaz.annotations.Test;
-import team.isaz.exceptions.PackageNotFoundException;
+import team.isaz.exceptions.PackageAnalyzeException;
 import team.isaz.utils.StaticUtils;
 
 import java.lang.reflect.InvocationTargetException;
@@ -19,6 +19,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+/**
+ * <b>Класс @code{ArkOfTests}</b>
+ * Единственный публичный метод @link{ArkOfTests#execute}
+ * запускает тестирование всех аннотированных методов.
+ * Сами тесты должны запускать ассерты из класса @link{ArkOfAsserts}
+ * <p>
+ * В ходе поиска тестов анализируются все классы системного загрузчика, с помощью Google Guava.
+ */
 @SuppressWarnings("UnstableApiUsage")
 public class ArkOfTests {
     static Logger logger = LoggerFactory.getLogger(ArkOfTests.class);
@@ -27,12 +35,12 @@ public class ArkOfTests {
      * <b>Запустить все тесты из пакета</b>
      *
      * @param testingPackage пакет, содержащий файлы для тестирования.
-     * @throws PackageNotFoundException если не удалось загрузить пакет.
+     * @throws PackageAnalyzeException если не удалось загрузить пакет.
      */
-    public static void execute(String testingPackage) throws PackageNotFoundException {
+    public static void execute(String testingPackage) throws PackageAnalyzeException {
         var classList1 = getClasses(testingPackage);
         if (classList1 == null) {
-            throw new PackageNotFoundException("Не удалось загрузить пакет.");
+            throw new PackageAnalyzeException("Не удалось загрузить пакет.");
         }
 
         for (var aClass : classList1) {

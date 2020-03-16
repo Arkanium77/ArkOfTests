@@ -3,7 +3,12 @@ package team.isaz.utils;
 import java.util.Arrays;
 import java.util.Set;
 
+/**
+ * Класс со статическими утилитами, в основном,
+ * посвящёнными форматированному выводу логов.
+ */
 public class StaticUtils {
+
     /**
      * <b>Строковое представление true\false для тестов</b>
      *
@@ -19,6 +24,7 @@ public class StaticUtils {
         }
         return presenting;
     }
+
 
     /**
      * <b>Вычисление максимальной длины строки</b>
@@ -36,9 +42,10 @@ public class StaticUtils {
 
     /**
      * <b>Центрирование строки</b>
-     * @param string строка для центрирования.
+     *
+     * @param string     строка для центрирования.
      * @param fullLength длина для дополнения символами
-     * @param filler символ-заполнитель.
+     * @param filler     символ-заполнитель.
      * @return строку, дополненную до нужной длины слева и справа символом filler.
      */
     public static String centredString(String string, int fullLength, char filler) {
@@ -50,6 +57,5 @@ public class StaticUtils {
         Arrays.fill(chars, filler);
         String pad = new String(chars);
         return String.format("%s%s%s", pad, string, pad);
-
     }
 }
