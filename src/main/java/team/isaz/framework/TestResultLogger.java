@@ -4,16 +4,17 @@ import com.google.common.base.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 class TestResultLogger {
     private static final String INDENT = "    ";
     private Logger logger = LoggerFactory.getLogger(TestResultLogger.class);
     private String className;
-    private Map<String, AssertResult> results;
+    private List<AssertResult> results;
 
     /**
      * <b>Приватный конструктор</b>
@@ -24,26 +25,31 @@ class TestResultLogger {
 
     }
 
-    protected TestResultLogger(String className, Map<String, AssertResult> results) {
+    protected TestResultLogger(String className, List<AssertResult> results) {
         this.className = className;
-        this.results = new HashMap<>();
-        results.forEach((key, value) -> this.results.put(key, value));
+        this.results = new ArrayList<>(results);
     }
 
     /**
      * <b>Логгирование результатов тестов</b>
      */
     protected void loggingTestResults() {
-        int maxNameOfMethodLength = getMaxStringLength(results.keySet()) + 4;
+        int maxNameOfMethodLength = getMaxStringLength(getSetOfMethodNames()) + 4;
         int fullStringLength = 26 + maxNameOfMethodLength;
         logger.info(centredString(String.format("%s%s%s", "Testing of ", className, " class"),
                 fullStringLength, '-'));
-        for (String test : results.keySet()) {
-            String presenting = getTestResultLogString(maxNameOfMethodLength, test);
+        for (AssertResult result : results) {
+            String presenting = getTestResultLogString(maxNameOfMethodLength, result);
             logger.info(presenting);
         }
         String log = getEndOfTestSeriesLogString(fullStringLength);
         logger.info(log);
+    }
+
+    protected Set<String> getSetOfMethodNames() {
+        return results.stream()
+                .map(AssertResult::getTestName)
+                .collect(Collectors.toSet());
     }
 
     /**
@@ -53,25 +59,25 @@ class TestResultLogger {
      * @return строку содержащую информацию о числе пройденных\общем числе тестов
      */
     private String getEndOfTestSeriesLogString(int fullStringLength) {
-        long testPassed = results.values()
+        long testPassed = results
                 .stream()
                 .map(AssertResult::getResultOfAssertion)
-                .filter(result -> result).count();
+                .filter(result -> result)
+                .count();
         return centredString("TEST PASSED " + testPassed + " OF " + results.size(),
-                fullStringLength, '-') + '\n';
+                fullStringLength) + '\n';
     }
 
     /**
      * <b>Генерация логгируемой строки для каждого результата.</b>
      *
      * @param maxNameOfMethodLength максимальная длина имени метода (для выравнивания)
-     * @param test                  имя теста, для которого генерируем строку
+     * @param result                результаты теста, для которого генерируем строку
      * @return строку, пригодную для отправки в лог.
      */
-    private String getTestResultLogString(int maxNameOfMethodLength, String test) {
-        AssertResult result = results.get(test);
+    private String getTestResultLogString(int maxNameOfMethodLength, AssertResult result) {
         String presenting = getPresentationOfResultStatus(result);
-        presenting = String.format(presenting, Strings.padEnd(test, maxNameOfMethodLength, ' '));
+        presenting = String.format(presenting, Strings.padEnd(result.getTestName(), maxNameOfMethodLength, ' '));
         if (result.isTestFailed()) {
             presenting += "\n" + getExceptedActual(result, presenting.length());
         }
@@ -141,6 +147,17 @@ class TestResultLogger {
      *
      * @param string     строка для центрирования.
      * @param fullLength длина для дополнения символами
+     * @return строку, дополненную до нужной длины слева и справа символом '-'.
+     */
+    private String centredString(String string, int fullLength) {
+        return centredString(string, fullLength, '-');
+    }
+
+    /**
+     * <b>Центрирование строки</b>
+     *
+     * @param string     строка для центрирования.
+     * @param fullLength длина для дополнения символами
      * @param filler     символ-заполнитель.
      * @return строку, дополненную до нужной длины слева и справа символом filler.
      */
@@ -164,11 +181,11 @@ class TestResultLogger {
      * @return строку, в которой подстрока string содержится count раз
      */
     private String repeat(String string, int count) {
-        String repeatedString = "";
+        StringBuilder repeatedString = new StringBuilder();
         while (count > 0) {
-            repeatedString += string;
+            repeatedString.append(string);
             count--;
         }
-        return repeatedString;
+        return repeatedString.toString();
     }
 }
