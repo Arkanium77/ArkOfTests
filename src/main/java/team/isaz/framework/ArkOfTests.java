@@ -10,9 +10,7 @@ import team.isaz.annotations.Test;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -40,7 +38,7 @@ class ArkOfTests {
         }
 
         for (var aClass : classList) {
-            Map<String, AssertResult> results = runClassTesting(aClass);
+            List<AssertResult> results = runClassTesting(aClass);
             if (results == null || results.size() == 0) continue;
             TestResultLogger resultLogger = new TestResultLogger(aClass.getName(), results);
             resultLogger.loggingTestResults();
@@ -52,9 +50,9 @@ class ArkOfTests {
      * <b>Протестировать класс</b>
      *
      * @param aClass класс для тестирования.
-     * @return @code{HashMap<String, AssertResult>} содержащий имена короткие имена методов и результаты их тестирования.
+     * @return @code{List<AssertResult>} результаты тестирования всех методов класса aClass.
      */
-    private Map<String, AssertResult> runClassTesting(Class aClass) {
+    private List<AssertResult> runClassTesting(Class aClass) {
         Object invoker;
         try {
             invoker = aClass.getConstructor().newInstance();
@@ -65,8 +63,7 @@ class ArkOfTests {
         List<Method> beforeTest = getAnnotatedMethods(aClass, Before.class);
         List<Method> afterTest = getAnnotatedMethods(aClass, After.class);
         List<Method> theTest = getAnnotatedMethods(aClass, Test.class);
-        Map<String, AssertResult> resultMap = testMethodsFromList(theTest, beforeTest, afterTest, invoker);
-        return resultMap;
+        return testMethodsFromList(theTest, beforeTest, afterTest, invoker);
     }
 
     /**
@@ -77,16 +74,14 @@ class ArkOfTests {
      * @param afterTest  методы, запускающиеся после каждого теста
      * @param invoker    объект, от которого будут вызваны тесты.
      *                   Если тесты записаны в статической форме - используйте null
-     * @return @code{HashMap<String,Boolean>} содержащий имена короткие имена методов и результаты их тестирования.
+     * @return список результатов тестов @code{AssertResult}.
      */
-    private Map<String, AssertResult> testMethodsFromList(List<Method> tests, List<Method> beforeTest,
-                                                          List<Method> afterTest, Object invoker) {
-        Map<String, AssertResult> resultsOfTestSeries = new HashMap<>();
-        for (Method test : tests) {
-            AssertResult result = testRun(test, beforeTest, afterTest, invoker);
-            resultsOfTestSeries.put(test.getName(), result);
-        }
-        return resultsOfTestSeries;
+    private List<AssertResult> testMethodsFromList(List<Method> tests, List<Method> beforeTest,
+                                                   List<Method> afterTest, Object invoker) {
+
+        return tests.stream()
+                .map(test -> testRun(test, beforeTest, afterTest, invoker))
+                .collect(Collectors.toList());
     }
 
     /**
@@ -113,7 +108,7 @@ class ArkOfTests {
      * @return AssertedResult, содержащий информацию о результатах теста или ошибке его прервавшей.
      */
     private AssertResult testRun(Method test, List<Method> beforeTest, List<Method> afterTest, Object invoker) {
-        AssertResult result = null;
+        AssertResult result = new AssertResult(new NullPointerException());
         beforeTest.forEach(method -> invokeThat(method, invoker));
         try {
             test.invoke(invoker);
@@ -128,6 +123,7 @@ class ArkOfTests {
         } finally {
             afterTest.forEach(method -> invokeThat(method, invoker));
         }
+        result.setTestName(test.getName());
         return result;
     }
 

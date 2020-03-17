@@ -104,6 +104,10 @@ class AssertResult extends AssertionError {
         return testName;
     }
 
+    protected void setTestName(String newTestName) {
+        testName = newTestName;
+    }
+
     @Override
     public String toString() {
         if (unexpectedThrowable != null) {
