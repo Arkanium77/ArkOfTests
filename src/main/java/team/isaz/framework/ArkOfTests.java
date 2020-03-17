@@ -8,7 +8,6 @@ import org.slf4j.LoggerFactory;
 import team.isaz.annotations.After;
 import team.isaz.annotations.Before;
 import team.isaz.annotations.Test;
-import team.isaz.exceptions.PackageAnalyzeException;
 import team.isaz.utils.StaticUtils;
 
 import java.lang.reflect.InvocationTargetException;
@@ -35,16 +34,15 @@ public class ArkOfTests {
      * <b>Запустить все тесты из пакета</b>
      *
      * @param testingPackage пакет, содержащий файлы для тестирования.
-     * @throws PackageAnalyzeException если не удалось загрузить пакет.
      */
-    public static void execute(String testingPackage) throws PackageAnalyzeException {
-        var classList1 = getClasses(testingPackage);
-        if (classList1 == null) {
-            throw new PackageAnalyzeException("Не удалось загрузить пакет.");
+    public static void execute(String testingPackage) {
+        var classList = getClasses(testingPackage);
+        if (classList == null) {
+            logger.error("Не удалось прочитать пакет {}", testingPackage);
         }
 
-        for (var aClass : classList1) {
-            Map<String, Boolean> results = testClass(aClass);
+        for (var aClass : classList) {
+            Map<String, Boolean> results = runClassTesting(aClass);
             if (results == null || results.size() == 0) continue;
 
             loggingTestResults(aClass.getName(), results);
@@ -76,12 +74,12 @@ public class ArkOfTests {
      * @param aClass класс для тестирования.
      * @return @code{HashMap<String,Boolean>} содержащий имена короткие имена методов и результаты их тестирования.
      */
-    private static Map<String, Boolean> testClass(Class aClass) {
+    private static Map<String, Boolean> runClassTesting(Class aClass) {
         Object invoker;
         try {
             invoker = aClass.getConstructor().newInstance();
         } catch (Exception e) {
-            logger.error(e.getMessage());
+            logger.error("Can't create object of testing class.\nError:{}", e.toString());
             return null;
         }
         List<Method> beforeTest = getAnnotatedMethods(aClass, Before.class);
@@ -160,7 +158,7 @@ public class ArkOfTests {
         try {
             return method.invoke(invoker);
         } catch (IllegalAccessException | InvocationTargetException e) {
-            e.printStackTrace();
+            logger.error("Не удалось вызвать метод! \n Error: {}", e.toString());
         }
         return null;
     }
@@ -177,16 +175,24 @@ public class ArkOfTests {
         List<Class> classes;
         classes = classpath.getTopLevelClassesRecursive(testingPackage)
                 .stream()
-                .map(classInfo -> {
-                    try {
-                        return Class.forName(classInfo.getName());
-                    } catch (Exception e) {
-                        logger.error("Can't load class!\n" + e.getMessage());
-                        return null;
-                    }
-                })
+                .map(ArkOfTests::getClassByClassInfo)
                 .collect(Collectors.toList());
         return classes;
+    }
+
+    /**
+     * <b>Получить класс по Guava ClassInfo</b>
+     *
+     * @param classInfo информация о классе по Google Guava Reflection
+     * @return Class-объект соответствующий classInfo, или null в случае ошибок.
+     */
+    private static Class<?> getClassByClassInfo(ClassPath.ClassInfo classInfo) {
+        try {
+            return Class.forName(classInfo.getName());
+        } catch (Exception e) {
+            logger.error("Can't load class!\n" + e.getMessage());
+        }
+        return null;
     }
 
     /**

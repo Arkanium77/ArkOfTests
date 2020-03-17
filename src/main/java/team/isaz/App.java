@@ -1,14 +1,11 @@
 package team.isaz;
 
-import team.isaz.exceptions.PackageAnalyzeException;
 import team.isaz.framework.ArkOfTests;
-
-import java.io.IOException;
 
 
 public class App {
 
-    public static void main(String[] args) throws ClassNotFoundException, IOException, PackageAnalyzeException {
+    public static void main(String[] args) {
         /*
         Пример работы фреймворка для тестирования.
         Будут протестированны классы AdderTest и DividerTest,

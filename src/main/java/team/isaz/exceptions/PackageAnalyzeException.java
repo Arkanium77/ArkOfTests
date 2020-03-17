@@ -5,6 +5,7 @@ package team.isaz.exceptions;
  * например, если он не найден или
  * произошла неудачная попытка загрузть класс ему принадлежащий.
  */
+@Deprecated
 public class PackageAnalyzeException extends Exception {
     public PackageAnalyzeException(String message) {
         super(message);
