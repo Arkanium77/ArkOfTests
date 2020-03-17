@@ -1,6 +1,6 @@
 package team.isaz;
 
-import team.isaz.framework.ArkOfTests;
+import team.isaz.framework.GatesOfTesting;
 
 
 public class App {
@@ -18,9 +18,8 @@ public class App {
         в одном из @Before методов и выводится в консоль в @After.
         Разумеется, тесты, как и классы абсолютно не практикоприменимы.
 
-        В классе ArkOfTests все методы статические, это связано с тем, как именно
-        вызывался метод в примере из презентации, для максимального соответствия.
+        Класс GatesOfTesting является статическим интерфейсом для основного класса фреймворка.
          */
-        ArkOfTests.execute("team.isaz.exampleClassesTests");
+        GatesOfTesting.enter("team.isaz.exampleClassesTests");
     }
 }
