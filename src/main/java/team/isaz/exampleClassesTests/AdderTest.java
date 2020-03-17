@@ -20,7 +20,7 @@ public class AdderTest {
 
     @Test
     public void add3and5is100() {
-        ArkOfAsserts.assertEquals(adder.add(3, 5), 100);
+        ArkOfAsserts.assertEquals(adder.add(3, 5).intValue(), 100);
     }
 
     @Test

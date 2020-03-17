@@ -1,7 +1,6 @@
 package team.isaz.exampleClasses.another;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 
 public class Divider {
     /**

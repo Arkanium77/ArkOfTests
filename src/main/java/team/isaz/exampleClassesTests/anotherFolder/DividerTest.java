@@ -35,8 +35,13 @@ public class DividerTest {
     }
 
     @Test
-    public void divideFiveByTwoisTwoPointFive() {
+    public void divideFiveByTwoIsTwoPointFive() {
         ArkOfAsserts.assertEquals(divider.div(5, 2).doubleValue(), 2.5);
+    }
+
+    @Test
+    public void testWithStackOverflowException() {
+        testWithStackOverflowException();
     }
 
     @After
@@ -44,4 +49,6 @@ public class DividerTest {
         //Нужен только для демонстрации того, что аннтации Before-After обрабатываются.
         logger.info("it's after metod runs! {}\n", simpleString);
     }
+
+
 }
