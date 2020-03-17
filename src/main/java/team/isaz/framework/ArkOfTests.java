@@ -113,7 +113,7 @@ class ArkOfTests {
      * @return AssertedResult, содержащий информацию о результатах теста или ошибке его прервавшей.
      */
     private AssertResult testRun(Method test, List<Method> beforeTest, List<Method> afterTest, Object invoker) {
-        AssertResult result = null;
+        AssertResult result = new AssertResult(new NullPointerException());
         beforeTest.forEach(method -> invokeThat(method, invoker));
         try {
             test.invoke(invoker);
